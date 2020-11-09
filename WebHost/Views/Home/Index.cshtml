@@ -1,0 +1,55 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+@model MDGriphe.Experiments.Lumia950.WebHost.Models.MainModel;
+
+<div class="text-center">
+	<h1 class="display-4">Welcome to ...</h1>
+	<h2 class="display-5">Microsoft Lumia 950 powered web site</h2>
+</div>
+<div class="text-left">
+	<h3>Information</h3>
+	<p></p>
+	<p>This site is running ASP.NET Core 3.1 on Windows 10 for ARM running on a Microsoft Lumia 950 phone</p>
+	<p></p>
+	<p>It's a "just for fun" project. However, I'd like to see how much load it can handle. So please feel free to share this link</p>
+	<p></p>
+	<p>The phone is connected through WiFi to a 100 MBit network at my home office</p>
+</div>
+
+<div class="text-left">
+	<p></p>
+	<h3>Details</h3>
+	<div>
+		I didn't manage to run the SQL Server on the phone. LocalDB mode didn't work as well. But SqlLite works perfectly with the Entity Framework. 
+
+		The source code will be available a little bit later. I need to clean up it a bit. 
+	</div>
+</div>
+
+<div class="text-left">
+	<p></p>
+	<h3>Statistics</h3>
+	<p></p>
+	<p>Total Visits Count: @Model.TotalVisitsCount</p>
+	<p></p>
+
+	<h4>Last visits (max 10)</h4>
+	<table>
+		<tr>
+			<th>Id</th>
+			<th>Date (UTC)</th>
+			<th>IP</th>
+		</tr>
+		@foreach (var v in Model.Last10Visits)
+		{
+			<tr>
+				<td>@v.Id</td>
+				<td>@v.Created</td>
+				<td>@v.IP</td>
+			</tr>
+		}
+	</table>
+
+</div>
