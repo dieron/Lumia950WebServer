@@ -6,6 +6,7 @@
     <RootNamespace>MDGriphe.Experiments.Lumia950.WebHost</RootNamespace>
     <StartupObject></StartupObject>
     <OutputType>Exe</OutputType>
+    <UserSecretsId>fa4c3592-f469-45d7-ad6d-d9c5901ee5cf</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
