@@ -3,14 +3,16 @@ using System;
 using MDGriphe.Experiments.Lumia950.WebHost.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MDGriphe.Experiments.Lumia950.WebHost.Migrations
 {
     [DbContext(typeof(VisitorsDbContext))]
-    partial class VisitorsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201110131906_Index1")]
+    partial class Index1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -22,6 +22,9 @@ namespace MDGriphe.Experiments.Lumia950.WebHost.Controllers
 
 		public IActionResult Index()
 		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
 			var mainModel = new MainModel();
 
 			// registering the visit
@@ -29,9 +32,16 @@ namespace MDGriphe.Experiments.Lumia950.WebHost.Controllers
 			{
 				using (var context = scope.ServiceProvider.GetService<VisitorsDbContext>())
 				{
+					var now = DateTime.UtcNow;
+					var nowDate = DateTime.UtcNow.Date;
+					var currentMonthStart = new DateTime(now.Year, now.Month, 1);
+					var prevMonthStart = new DateTime(now.AddMonths(-1).Year, now.AddMonths(-1).Month, 1);
+
 					// loading stats
-					int visitsCount = context.Visitors.AsQueryable().Count();
-					mainModel.TotalVisitsCount = visitsCount;
+					mainModel.TotalVisitsCount = context.Visitors.Count();
+					mainModel.YesterdayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
+					mainModel.TodayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate);
+					mainModel.CurrentMonthVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
 
 					// last 10
 					var last10 = context.Visitors.OrderByDescending(visit => visit.Id).Take(10).ToList();
@@ -40,7 +50,7 @@ namespace MDGriphe.Experiments.Lumia950.WebHost.Controllers
 					// registering new visit
 					var visit = new Visit
 					{
-						Created = DateTime.UtcNow,
+						Created = now,
 						IP = HttpContext.Connection.RemoteIpAddress.ToString(),
 						VisitorId = HttpContext.Connection.Id,
 						Query = HttpContext.Request.QueryString.ToString(),
@@ -55,6 +65,9 @@ namespace MDGriphe.Experiments.Lumia950.WebHost.Controllers
 				}
 			}
 
+			sw.Stop();
+
+			mainModel.ControllerTimeMs = (int)sw.ElapsedMilliseconds;
 
 			return View(mainModel);
 		}

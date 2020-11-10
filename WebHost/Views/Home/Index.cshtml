@@ -3,6 +3,9 @@
 }
 
 @model MDGriphe.Experiments.Lumia950.WebHost.Models.MainModel;
+<style type="text/css">	.ipTable td {
+		padding: 4px 12px 4px 8px;
+	}</style>
 
 <div class="text-center">
 	<h1 class="display-4">Welcome to ...</h1>
@@ -24,7 +27,7 @@
 	<div>
 		I didn't manage to run the SQL Server on the phone. LocalDB mode didn't work as well. But SqlLite works perfectly with the Entity Framework.
 
-		The source code is available here: https://github.com/dieron/Lumia950WebServer
+		The source code is available here: <a href="https://github.com/dieron/Lumia950WebServer">https://github.com/dieron/Lumia950WebServer</a>
 	</div>
 </div>
 
@@ -32,11 +35,16 @@
 	<p></p>
 	<h3>Statistics</h3>
 	<p></p>
-	<p>Total Visits Count: @Model.TotalVisitsCount</p>
-	<p></p>
+	<p>
+		Total Visits Count: @Model.TotalVisitsCount<br/>
+		Today: @Model.TodayVisitsCount<br/>
+		Yesterday: @Model.YesterdayVisitsCount<br/>
+		This month: @Model.CurrentMonthVisitsCount<br/>
+		Last month: @Model.LastMonthVisitsCount<br/>
+	</p>
 
 	<h4>Last visits (max 10)</h4>
-	<table>
+	<table class="ipTable">
 		<tr>
 			<th>Id</th>
 			<th>Date (UTC)</th>
@@ -51,5 +59,8 @@
 			</tr>
 		}
 	</table>
+	
+	<p></p>
+	<p>Time taken: @Model.ControllerTimeMs (ms)</p>
 
 </div>
