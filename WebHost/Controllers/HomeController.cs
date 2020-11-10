@@ -28,42 +28,40 @@ namespace MDGriphe.Experiments.Lumia950.WebHost.Controllers
 			var mainModel = new MainModel();
 
 			// registering the visit
-			using (var scope = _services.CreateScope())
+			using (var context = _services.GetService<VisitorsDbContext>())
 			{
-				using (var context = scope.ServiceProvider.GetService<VisitorsDbContext>())
+				var now = DateTime.UtcNow;
+				var nowDate = DateTime.UtcNow.Date;
+				var currentMonthStart = new DateTime(now.Year, now.Month, 1);
+				var prevMonthStart = new DateTime(now.AddMonths(-1).Year, now.AddMonths(-1).Month, 1);
+
+				// loading stats
+				mainModel.TotalVisitsCount = context.Visitors.Count();
+				mainModel.YesterdayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
+				mainModel.TodayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate);
+				mainModel.CurrentMonthVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
+
+				// last 10
+				var last10 = context.Visitors.OrderByDescending(visit => visit.Id).Take(10).ToList();
+				mainModel.Last10Visits = last10;
+
+				// registering new visit
+				var visit = new Visit
 				{
-					var now = DateTime.UtcNow;
-					var nowDate = DateTime.UtcNow.Date;
-					var currentMonthStart = new DateTime(now.Year, now.Month, 1);
-					var prevMonthStart = new DateTime(now.AddMonths(-1).Year, now.AddMonths(-1).Month, 1);
+					Created = now,
+					IP = HttpContext.Connection.RemoteIpAddress.ToString(),
+					VisitorId = HttpContext.Connection.Id,
+					Query = HttpContext.Request.QueryString.ToString(),
+					Path = HttpContext.Request.Path.ToString(),
+					Headers = String.Join("; ", HttpContext.Request.Headers.Select(pair =>$"{pair.Key}: {pair.Value}")),
+				};
+				context.Visitors.Add(visit);
 
-					// loading stats
-					mainModel.TotalVisitsCount = context.Visitors.Count();
-					mainModel.YesterdayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
-					mainModel.TodayVisitsCount = context.Visitors.Count(v => v.Created >= nowDate);
-					mainModel.CurrentMonthVisitsCount = context.Visitors.Count(v => v.Created >= nowDate.AddDays(-1) && v.Created < nowDate);
-
-					// last 10
-					var last10 = context.Visitors.OrderByDescending(visit => visit.Id).Take(10).ToList();
-					mainModel.Last10Visits = last10;
-
-					// registering new visit
-					var visit = new Visit
-					{
-						Created = now,
-						IP = HttpContext.Connection.RemoteIpAddress.ToString(),
-						VisitorId = HttpContext.Connection.Id,
-						Query = HttpContext.Request.QueryString.ToString(),
-						Path = HttpContext.Request.Path.ToString(),
-						Headers = String.Join("; ", HttpContext.Request.Headers.Select(pair =>$"{pair.Key}: {pair.Value}")),
-					};
-					context.Visitors.Add(visit);
-
-					context.SaveChanges();
+				context.SaveChanges();
 
 
-				}
 			}
+			
 
 			sw.Stop();
 
